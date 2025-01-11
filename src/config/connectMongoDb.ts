@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const user = process.env.MONGO_USERNAME;
 const password = process.env.MONGO_PASSWORD;
-const dbName = 'exlabs-task';
+const dbName = process.env.MONGO_DATABASE;
 
 export async function connectMongoDb() {
   await mongoose

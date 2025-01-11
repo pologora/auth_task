@@ -1,14 +1,13 @@
 import { rateLimit } from 'express-rate-limit';
+import { config } from './config';
 
-const minutes = 15;
 const secondsInMinute = 60;
 const millisecndsInSecond = 1000;
-const requestsPerWindow = 100;
 const standardHeaders = 'draft-8';
 
 export const rateLimiter = rateLimit({
   legacyHeaders: false,
-  limit: requestsPerWindow,
+  limit: config.limits.requestPerWindow,
   standardHeaders,
-  windowMs: minutes * secondsInMinute * millisecndsInSecond,
+  windowMs: config.limits.windowMinutes * secondsInMinute * millisecndsInSecond,
 });

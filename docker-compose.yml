@@ -7,7 +7,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGODB_DATABASE: exlabs-task
+      MONGODB_DATABASE: ${MONGO_DATABASE}
     volumes:
       - mongodbdata:/data/db
 

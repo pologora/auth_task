@@ -58,7 +58,7 @@ npm install
 2. **Configuration:**
 
 - Rename `env.dev.example` to `.env.dev` and adjust the variables as needed.
-- Rename `env.dev.example` to `.env.prod.` Ensure all necessary variables are set for the application to function properly in the production environment.
+- Rename `env.prod.example` to `.env.prod.` Ensure all necessary variables are set for the application to function properly in the production environment.
 
 ### Development Enviroment
 
@@ -70,7 +70,7 @@ To run the application in development mode:
 npm run start:dev
 ```
 
-The application will be accessible at `http://localhost:8000/api/v1`
+The application will be accessible at `http://localhost:3000/api/v1`
 
 ### Production Enviroment
 
@@ -80,7 +80,7 @@ To run the application in production mode:
 npm run start:prod
 ```
 
-The application will be accessible at `http://localhost:8000/api/v1`
+The application will be accessible at `http://localhost:3000/api/v1`
 
 ## Database Schema
 
@@ -95,4 +95,15 @@ The application will be accessible at `http://localhost:8000/api/v1`
   - `resetPasswordTokenExpiration` Date,
   - `passwordChangedAt` Date,
   - `failedLoginAttempts` Number default 0,
-  - `lockUntil` Date default null,
+  - `lockUntil` Date
+
+## Security
+
+The following security measures have been implemented:
+
+- Encrypted passwords and reset password tokens
+- Rate limiting
+- JWT stored in cookies
+- Denial of access after password change
+- Security headers with `Helmet`
+- Sanitizes user-supplied data to prevent MongoDB Operator Injection

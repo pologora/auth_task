@@ -4,11 +4,10 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "env-cmd -f .dev.env concurrently \"docker-compose up\" \"nodemon src/server.ts\"",
-    "start:prod": "env-cmd -f .prod.env concurrently \"docker-compose up\" \"nodemon src/server.ts\"",
-    "db": "docker-compose up -d"
+    "start:prod": "env-cmd -f .prod.env concurrently \"docker-compose up\" \"nodemon src/server.ts\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Oleksandr Wojtyla",
   "license": "ISC",
   "description": "",
   "dependencies": {
@@ -16,6 +15,7 @@
     "express": "^4.21.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.4"
