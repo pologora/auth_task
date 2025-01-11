@@ -26,13 +26,6 @@ export default [
         },
       ],
       'prefer-template': 'error',
-      'sort-keys': ['error', 'asc', { caseSensitive: true, minKeys: 2, natural: true }],
-    },
-  },
-  {
-    files: ['**/*controller.ts'],
-    rules: {
-      'sort-keys': 'off',
     },
   },
 ];

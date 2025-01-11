@@ -10,5 +10,15 @@ export const HTTP_STATUS_CODES = {
   UNAUTHORIZED_401: 401,
 } as const;
 
+export const USER_ROLES = {
+  admin: 'admin',
+  user: 'user',
+} as const;
+
+export const APP_MODES = {
+  production: 'production',
+  development: 'development',
+} as const;
+
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 export type StatusCode = (typeof HTTP_STATUS_CODES)[keyof typeof HTTP_STATUS_CODES];
-export type StatusCodes = typeof HTTP_STATUS_CODES;

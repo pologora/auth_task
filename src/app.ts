@@ -1,17 +1,17 @@
 import express, { NextFunction, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { envFilesMap } from './config/envFilesMap';
-dotenv.config({ path: envFilesMap.get(process.env.NODE_ENV!) });
+import 'dotenv/config';
 
 import mongoSanitize from 'express-mongo-sanitize';
 
 import { globalErrorHandler } from './utils/globalErrorHandler';
 import { connectMongoDb } from './config/connectMongoDb';
-import { HTTP_STATUS_CODES } from './constants/statusCodes';
-import { userRouter } from './entities/users/user.router';
+import { HTTP_STATUS_CODES } from './constants/constants';
+import { userRouter } from './entities/users/userRouter';
 import { rateLimiter } from './config/rateLimiter';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { config } from './config/config';
+import { authRouter } from './entities/auth/authRouter';
 
 const app = express();
 
@@ -25,10 +25,12 @@ app.use(mongoSanitize());
 app.use(rateLimiter);
 // HTTP response headers
 app.use(helmet());
+// cookies
+app.use(cookieParser());
 
 // routes
-app.use('api/v1/users', userRouter);
-app.use('api/v1/auth', () => {});
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/auth', authRouter);
 
 app.use(globalErrorHandler);
 

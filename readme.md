@@ -91,9 +91,6 @@ The application will be accessible at `http://localhost:3000/api/v1`
   - `lastName` String,
   - `password` String required,
   - `role` String enum ('admin', 'user') required,
-  - `resetPasswordToken` String,
-  - `resetPasswordTokenExpiration` Date,
-  - `passwordChangedAt` Date,
   - `failedLoginAttempts` Number default 0,
   - `lockUntil` Date
 

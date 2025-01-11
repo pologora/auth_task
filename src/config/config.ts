@@ -1,4 +1,7 @@
 /* eslint-disable no-magic-numbers */
+
+const oneDayInMs = 86_400_000;
+
 export const config = {
   database: {
     database: process.env.MONGO_DATABASE,
@@ -12,5 +15,19 @@ export const config = {
   },
   server: {
     port: process.env.PORT || '3000',
+  },
+  password: {
+    saltRounds: Number(process.env.PASSWORD_HASH_SALT_ROUNDS) || 10,
+    minLength: Number(process.env.MIN_PASSWORD_LENGTH) || 8,
+  },
+  cookie: {
+    jwtToken: {
+      name: 'jwtToken',
+      maxAge: Number(process.env.COOKIE_MAX_AGE_MS) || oneDayInMs,
+    },
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expireIn: process.env.JWT_EXPIRES_IN || '1d',
   },
 };

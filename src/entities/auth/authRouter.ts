@@ -1,0 +1,20 @@
+import { Router } from 'express';
+import { AuthService } from './AuthService';
+import { AuthController } from './AuthController';
+import { User } from '../users/User';
+import { UserService } from '../users/UserService';
+import { JWTService } from '../../core/JWTService';
+
+const authRouter = Router();
+const userService = new UserService(User);
+const jwtService = new JWTService();
+const authService = new AuthService(User, userService, jwtService);
+const authController = new AuthController(authService);
+
+authRouter.route('/register').post((req, res, next) => authController.register(req, res, next));
+
+authRouter.route('/login').post((req, res, next) => authController.login(req, res, next));
+
+authRouter.route('/logout').get((req, res, next) => authController.logout(req, res, next));
+
+export { authRouter };
