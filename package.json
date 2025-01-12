@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start:dev": "env-cmd -f .dev.env concurrently \"docker-compose up\" \"nodemon src/server.ts\"",
-    "start:prod": "env-cmd -f .prod.env concurrently \"docker-compose up\" \"nodemon src/server.ts\""
+    "start:dev": "env-cmd -f .dev.env concurrently \"docker-compose up\" \"nodemon --files src/server.ts\"",
+    "start:prod": "env-cmd -f .prod.env concurrently \"docker-compose up\" \"nodemon --files src/server.ts\""
   },
   "keywords": [],
   "author": "Oleksandr Wojtyla",
