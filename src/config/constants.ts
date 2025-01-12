@@ -1,3 +1,5 @@
+import { config } from './config';
+
 export const HTTP_STATUS_CODES = {
   BAD_REQUEST_400: 400,
   CREATED_201: 201,
@@ -23,6 +25,16 @@ export const APP_MODES = {
 export const ENTITIES_NAMES = {
   user: 'User',
 } as const;
+
+export const ERROR_MESSAGES = {
+  invalidCredentials: `Invalid credentials. You have ${config.auth.maxLoginAttempts} attempts until your account will be temporarily blocked.`,
+  lockedTooManyFailedLoginAttempts: `Your account has been locked due to too many failed login attempts. Try again at {{lockUntil}}`,
+  userNotFound: 'User not found',
+  defaultUserFriendly: 'Something went wrong, please try again later.',
+};
+
+export const millisecondsInSecond = 1000;
+export const secondsInMinute = 60;
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 export type StatusCode = (typeof HTTP_STATUS_CODES)[keyof typeof HTTP_STATUS_CODES];

@@ -9,14 +9,14 @@ import {
 } from './types/types';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { AppError } from '../../core/AppError';
-import { HTTP_STATUS_CODES } from '../../config/constants';
+import { ERROR_MESSAGES, HTTP_STATUS_CODES } from '../../config/constants';
 
 export class UserService {
   constructor(private User: Model<CreateUserDto>) {}
 
   private checkUserExists(user: IUser | null): IUser {
     if (!user) {
-      throw new AppError('User not found', HTTP_STATUS_CODES.NOT_FOUND_404);
+      throw new AppError(ERROR_MESSAGES.userNotFound, HTTP_STATUS_CODES.NOT_FOUND_404);
     }
 
     return user;
