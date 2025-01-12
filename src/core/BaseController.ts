@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { StatusCode } from '../constants/constants';
+import { StatusCode } from '../config/constants';
 
 type SendResponseProps = {
   res: Response;

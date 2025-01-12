@@ -3,12 +3,11 @@ import { AuthService } from './AuthService';
 import { AuthController } from './AuthController';
 import { User } from '../users/User';
 import { UserService } from '../users/UserService';
-import { JWTService } from '../../core/JWTService';
+import { createJWT } from '../../utils/jwtFunction';
 
 const authRouter = Router();
 const userService = new UserService(User);
-const jwtService = new JWTService();
-const authService = new AuthService(User, userService, jwtService);
+const authService = new AuthService(User, userService, createJWT);
 const authController = new AuthController(authService);
 
 authRouter.route('/register').post((req, res, next) => authController.register(req, res, next));

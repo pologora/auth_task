@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { AppError } from '../core/AppError';
-import { APP_MODES, HTTP_STATUS_CODES, StatusCode } from '../constants/constants';
+import { APP_MODES, HTTP_STATUS_CODES, StatusCode } from '../config/constants';
 
 const sendDevError = (err: AppError, res: Response, statusCode: StatusCode) => {
   const { message, stack } = err;

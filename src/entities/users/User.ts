@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
-import { USER_ROLES } from '../../constants/constants';
-import { CreateUserDto } from '../dto/CreateUserDto';
+import { USER_ROLES } from '../../config/constants';
+import { CreateUserDto } from './dto/CreateUserDto';
 import { PasswordService } from '../../core/PasswordService';
 
 const UserSchema = new Schema<CreateUserDto>({

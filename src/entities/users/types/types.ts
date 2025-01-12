@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
-import { UserRole } from '../../../constants/constants';
-import { CreateUserDto } from '../../dto/CreateUserDto';
-import { UpdateUserDto } from '../../dto/UpdateUserDto';
+import { UserRole } from '../../../config/constants';
+import { CreateUserDto } from '../dto/CreateUserDto';
+import { UpdateUserDto } from '../dto/UpdateUserDto';
 
 export interface IUser {
   _id: Types.ObjectId | string;

@@ -5,7 +5,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 
 import { globalErrorHandler } from './utils/globalErrorHandler';
 import { connectMongoDb } from './config/connectMongoDb';
-import { HTTP_STATUS_CODES } from './constants/constants';
+import { HTTP_STATUS_CODES } from './config/constants';
 import { userRouter } from './entities/users/userRouter';
 import { rateLimiter } from './config/rateLimiter';
 import helmet from 'helmet';

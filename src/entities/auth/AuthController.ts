@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { BaseController } from '../../core/BaseController';
 import { AuthService } from './AuthService';
-import { APP_MODES, HTTP_STATUS_CODES } from '../../constants/constants';
+import { APP_MODES, HTTP_STATUS_CODES } from '../../config/constants';
 import { config } from '../../config/config';
 import { userLoginSchema, userRegisterSchema } from './validation';
 import { AppError } from '../../core/AppError';

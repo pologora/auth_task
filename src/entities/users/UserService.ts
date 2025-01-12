@@ -1,15 +1,15 @@
 import { Model } from 'mongoose';
 import { CreateUserProps, DeleteUserProps, FindOneByIdProps, IUser, UpdateUserProps } from './types/types';
-import { CreateUserDto } from '../dto/CreateUserDto';
+import { CreateUserDto } from './dto/CreateUserDto';
 import { AppError } from '../../core/AppError';
-import { HTTP_STATUS_CODES } from '../../constants/constants';
+import { HTTP_STATUS_CODES } from '../../config/constants';
 
 export class UserService {
   constructor(private User: Model<CreateUserDto>) {}
 
   private checkUserExists(user: IUser | null): IUser {
     if (!user) {
-      throw new AppError('No user found', HTTP_STATUS_CODES.NOT_FOUND_404);
+      throw new AppError('User not found', HTTP_STATUS_CODES.NOT_FOUND_404);
     }
 
     return user;

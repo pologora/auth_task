@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { BaseController } from '../../core/BaseController';
 import { UserService } from './UserService';
-import { HTTP_STATUS_CODES } from '../../constants/constants';
 import { userCreateSchema, userUpdateSchema } from './validation';
 import { AppError } from '../../core/AppError';
+import { HTTP_STATUS_CODES } from '../../config/constants';
 
 export class UserController extends BaseController {
   constructor(private userService: UserService) {

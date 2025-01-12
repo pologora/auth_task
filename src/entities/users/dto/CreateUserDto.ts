@@ -1,5 +1,5 @@
-import { UserRole } from '../../constants/constants';
-import { UserMethods } from '../users/types/types';
+import { UserRole } from '../../../config/constants';
+import { UserMethods } from '../types/types';
 
 export interface CreateUserDto extends Document, UserMethods {
   email: string;

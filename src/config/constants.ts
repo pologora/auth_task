@@ -20,5 +20,9 @@ export const APP_MODES = {
   development: 'development',
 } as const;
 
+export const ENTITIES_NAMES = {
+  user: 'User',
+} as const;
+
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 export type StatusCode = (typeof HTTP_STATUS_CODES)[keyof typeof HTTP_STATUS_CODES];

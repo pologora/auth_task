@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { config } from '../../config/config';
-import { USER_ROLES } from '../../constants/constants';
+import { USER_ROLES } from '../../config/constants';
 
 const minPasswordLength = config.password.minLength;
 

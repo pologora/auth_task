@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { USER_ROLES } from '../../constants/constants';
+import { USER_ROLES } from '../../config/constants';
 import { config } from '../../config/config';
 
 const minPasswordLength = config.password.minLength;
