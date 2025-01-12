@@ -3,10 +3,11 @@ import { UserService } from './UserService';
 import { User } from './User';
 import { UserController } from './UserController';
 import { asyncErrorCatch } from '../../utils/asyncErrorCatch';
+import { userCreateSchema, userUpdateSchema } from './validation';
 
 const userRouter = Router();
 const userService = new UserService(User);
-const userController = new UserController(userService);
+const userController = new UserController(userService, userCreateSchema, userUpdateSchema);
 
 userRouter
   .route('/')

@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { BaseController } from '../../core/BaseController';
 import { UserService } from './UserService';
-import { userCreateSchema, userUpdateSchema } from './validation';
 import { AppError } from '../../core/AppError';
 import { HTTP_STATUS_CODES } from '../../config/constants';
+import { Schema } from 'joi';
 
 export class UserController extends BaseController {
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private userCreateSchema: Schema, private userUpdateSchema: Schema) {
     super();
   }
 
   async create(req: Request, res: Response, _next: NextFunction) {
-    const { error, value } = userCreateSchema.validate(req.body);
+    const { error, value } = this.userCreateSchema.validate(req.body);
 
     if (error) {
       throw new AppError(error.message);
@@ -50,7 +50,7 @@ export class UserController extends BaseController {
   }
 
   async update(req: Request, res: Response, _next: NextFunction) {
-    const { error, value } = userUpdateSchema.validate(req.body);
+    const { error, value } = this.userUpdateSchema.validate(req.body);
 
     if (error) {
       throw new AppError(error.message);
