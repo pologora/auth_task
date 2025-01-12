@@ -12,7 +12,7 @@ const userCreateSchema = Joi.object({
   role: Joi.string()
     .valid(...Object.values(USER_ROLES))
     .required(),
-});
+}).unknown(false);
 
 const userUpdateSchema = Joi.object({
   firstName: Joi.string().optional(),
@@ -20,6 +20,10 @@ const userUpdateSchema = Joi.object({
   role: Joi.string()
     .valid(...Object.values(USER_ROLES))
     .optional(),
-});
+}).unknown(false);
 
-export { userCreateSchema, userUpdateSchema };
+const userParamsSchema = Joi.object({
+  role: Joi.string().optional(),
+}).unknown(false);
+
+export { userCreateSchema, userUpdateSchema, userParamsSchema };

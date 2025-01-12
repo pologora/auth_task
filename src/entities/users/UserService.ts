@@ -1,5 +1,12 @@
 import { Model } from 'mongoose';
-import { CreateUserProps, DeleteUserProps, FindOneByIdProps, IUser, UpdateUserProps } from './types/types';
+import {
+  CreateUserProps,
+  DeleteUserProps,
+  FindManyProps,
+  FindOneByIdProps,
+  IUser,
+  UpdateUserProps,
+} from './types/types';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { AppError } from '../../core/AppError';
 import { HTTP_STATUS_CODES } from '../../config/constants';
@@ -30,8 +37,8 @@ export class UserService {
     return this.checkUserExists(user);
   }
 
-  async findMany(): Promise<IUser[]> {
-    return await this.User.find({});
+  async findMany({ queryParams }: FindManyProps): Promise<IUser[]> {
+    return await this.User.find(queryParams);
   }
 
   async update({ id, data }: UpdateUserProps): Promise<IUser> {

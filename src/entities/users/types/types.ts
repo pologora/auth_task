@@ -21,5 +21,6 @@ export interface UserMethods {
 
 export type CreateUserProps = { data: CreateUserDto };
 export type FindOneByIdProps = { id: string };
+export type FindManyProps = { queryParams: object };
 export type UpdateUserProps = { data: UpdateUserDto; id: string };
 export type DeleteUserProps = { id: string };

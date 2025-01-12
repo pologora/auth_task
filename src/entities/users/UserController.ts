@@ -6,7 +6,12 @@ import { HTTP_STATUS_CODES } from '../../config/constants';
 import { Schema } from 'joi';
 
 export class UserController extends BaseController {
-  constructor(private userService: UserService, private userCreateSchema: Schema, private userUpdateSchema: Schema) {
+  constructor(
+    private userService: UserService,
+    private userCreateSchema: Schema,
+    private userUpdateSchema: Schema,
+    private userParamsSchema: Schema,
+  ) {
     super();
   }
 
@@ -38,8 +43,14 @@ export class UserController extends BaseController {
     });
   }
 
-  async findMany(_req: Request, res: Response, _next: NextFunction) {
-    const users = await this.userService.findMany();
+  async findMany(req: Request, res: Response, _next: NextFunction) {
+    const { error, value } = this.userParamsSchema.validate(req.query);
+
+    if (error) {
+      throw new AppError(error.message);
+    }
+
+    const users = await this.userService.findMany({ queryParams: value });
 
     this.sendResponse({
       message: 'Users retrieved successfully.',
