@@ -30,4 +30,8 @@ export const config = {
     secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN || '1d',
   },
+  auth: {
+    lockTimeMs: Number(process.env.AUTH_LOCK_TIME_MS) || 900_000, // 15 minutes,
+    maxLoginAttempts: Number(process.env.MAX_LOGIN_ATTEMPTS) || 5,
+  },
 };
