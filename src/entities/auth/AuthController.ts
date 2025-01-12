@@ -4,8 +4,8 @@ import { BaseController } from '../../core/BaseController';
 import { AuthService } from './AuthService';
 import { APP_MODES, HTTP_STATUS_CODES } from '../../config/constants';
 import { config } from '../../config/config';
-import { userLoginSchema, userRegisterSchema } from './validation';
 import { AppError } from '../../core/AppError';
+import { Schema } from 'joi';
 
 type SetJWTCookieProps = {
   res: Response;
@@ -13,7 +13,7 @@ type SetJWTCookieProps = {
 };
 
 export class AuthController extends BaseController {
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private userRegisterSchema: Schema, private userLoginSchema: Schema) {
     super();
   }
 
@@ -26,7 +26,7 @@ export class AuthController extends BaseController {
   }
 
   async register(req: Request, res: Response, _next: NextFunction) {
-    const { error, value } = userRegisterSchema.validate(req.body);
+    const { error, value } = this.userRegisterSchema.validate(req.body);
 
     if (error) {
       throw new AppError(error.message);
@@ -45,7 +45,7 @@ export class AuthController extends BaseController {
   }
 
   async login(req: Request, res: Response, _next: NextFunction) {
-    const { error, value } = userLoginSchema.validate(req.body);
+    const { error, value } = this.userLoginSchema.validate(req.body);
 
     if (error) {
       throw new AppError(error.message);
