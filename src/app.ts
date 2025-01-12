@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 import mongoSanitize from 'express-mongo-sanitize';
 
-import { globalErrorHandler } from './utils/globalErrorHandler';
+import { globalErrorHandler } from './middleware/globalErrorHandler';
 import { connectMongoDb } from './config/connectMongoDb';
 import { HTTP_STATUS_CODES } from './config/constants';
 import { userRouter } from './entities/users/userRouter';
