@@ -20,6 +20,11 @@ export const globalErrorHandler = (err: AppError, _req: Request, res: Response, 
 
   const isProductionMode = process.env.NODE_ENV === APP_MODES.production;
 
+  const mongoDbDuplicateKeyErrorCode = 11000;
+  if (err.code === mongoDbDuplicateKeyErrorCode) {
+    err = new AppError(`Field ${Object.keys(err.keyPattern!)[0]} already exists`);
+  }
+
   if (isProductionMode) {
     sendProductionError(err, res, statusCode);
   } else {
