@@ -3,6 +3,7 @@ import { config } from '../../config/config';
 import { USER_ROLES } from '../../config/constants';
 
 const minPasswordLength = config.password.minLength;
+const userUpdateMinFields = 1;
 
 const userCreateSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -20,7 +21,9 @@ const userUpdateSchema = Joi.object({
   role: Joi.string()
     .valid(...Object.values(USER_ROLES))
     .optional(),
-}).unknown(false);
+})
+  .min(userUpdateMinFields)
+  .unknown(false);
 
 const userParamsSchema = Joi.object({
   role: Joi.string().optional(),
