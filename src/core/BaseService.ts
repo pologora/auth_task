@@ -28,7 +28,7 @@ export class BaseService<T> {
   }
 
   async findOneById({ id }: FindOneByIdProps): Promise<T> {
-    const record = (await this.model.findById(id).lean()) as T;
+    const record = (await this.model.findById(id)) as T;
 
     return this.checkRecordExists(record);
   }
@@ -38,13 +38,13 @@ export class BaseService<T> {
   }
 
   async update({ id, data }: UpdateUserProps): Promise<T> {
-    const updatedUser = (await this.model.findByIdAndUpdate(id, data, { new: true }).lean()) as T;
+    const updatedUser = (await this.model.findByIdAndUpdate(id, data, { new: true })) as T;
 
     return this.checkRecordExists(updatedUser) as T;
   }
 
   async remove({ id }: DeleteUserProps): Promise<T> {
-    const deletedUser = (await this.model.findByIdAndDelete(id).lean()) as T;
+    const deletedUser = (await this.model.findByIdAndDelete(id)) as T;
 
     return this.checkRecordExists(deletedUser);
   }
