@@ -1,5 +1,4 @@
-import { Document, Model, Types } from 'mongoose';
-import { CreateUserDto } from '../users/dto/CreateUserDto';
+import { Model } from 'mongoose';
 import { IUser } from '../users/types/types';
 import { UserService } from '../users/UserService';
 import { AppError } from '../../core/AppError';
@@ -8,7 +7,7 @@ import { JWTCreateFunction } from '../../utils/jwtFunction';
 import { config } from '../../config/config';
 
 type RegisterProps = {
-  data: CreateUserDto;
+  data: IUser;
 };
 
 type LoginProps = {
@@ -16,16 +15,8 @@ type LoginProps = {
   password: string;
 };
 
-type UserDocument = Document<unknown, object, CreateUserDto> &
-  CreateUserDto &
-  Required<{ _id: Types.ObjectId }> & { __v: number };
-
 export class AuthService {
-  constructor(
-    private user: Model<CreateUserDto>,
-    private userService: UserService,
-    private createJWT: JWTCreateFunction,
-  ) {}
+  constructor(private user: Model<IUser>, private userService: UserService, private createJWT: JWTCreateFunction) {}
 
   async register({ data }: RegisterProps): Promise<{ user: IUser; token: string }> {
     const user = await this.userService.create({ data });
@@ -53,7 +44,7 @@ export class AuthService {
     return { user: userForResponse, token };
   }
 
-  prepareUserForResponse(user: UserDocument) {
+  prepareUserForResponse(user: IUser) {
     return {
       ...user.toObject(),
       password: undefined,
@@ -62,7 +53,7 @@ export class AuthService {
     } as Partial<IUser>;
   }
 
-  private async checkAndHandleLockStatus(user: UserDocument): Promise<void> {
+  private async checkAndHandleLockStatus(user: IUser): Promise<void> {
     const { lockUntil } = user;
     if (lockUntil) {
       if (Date.now() < lockUntil.getTime()) {
@@ -105,7 +96,7 @@ export class AuthService {
     await this.updateUserData(email, { failedLoginAttempts: 0, lockUntil });
   }
 
-  private async validatePassword(user: UserDocument, password: string): Promise<void> {
+  private async validatePassword(user: IUser, password: string): Promise<void> {
     const { email } = user;
 
     if (!(await user.isValidPassword(password))) {
@@ -135,7 +126,7 @@ export class AuthService {
     await this.resetUserLoginAttempts(email);
   }
 
-  private async findUserByEmail(email: string): Promise<UserDocument | null> {
+  private async findUserByEmail(email: string): Promise<IUser | null> {
     return this.user.findOne({ email }).select('+password +failedLoginAttempts +lockUntil');
   }
 }

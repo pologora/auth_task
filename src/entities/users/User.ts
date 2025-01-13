@@ -1,9 +1,9 @@
 import { model, Schema } from 'mongoose';
 import { USER_ROLES } from '../../config/constants';
-import { CreateUserDto } from './dto/CreateUserDto';
 import { PasswordService } from '../../core/PasswordService';
+import { IUser } from './types/types';
 
-const UserSchema = new Schema<CreateUserDto>(
+const UserSchema = new Schema<IUser>(
   {
     email: {
       lowercase: true,
@@ -44,6 +44,6 @@ UserSchema.methods.isValidPassword = async function (password: string): Promise<
   return await PasswordService.comparePassword({ password, hashedPassword: this.password });
 };
 
-const User = model<CreateUserDto>('User', UserSchema);
+const User = model<IUser>('User', UserSchema);
 
 export { User };
