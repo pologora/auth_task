@@ -15,25 +15,27 @@ import YAML from 'yamljs';
 import { config } from './config/config';
 import { authRouter } from './entities/auth/authRouter';
 
+process.on('uncaughtException', (err) => {
+  // eslint-disable-next-line no-console
+  console.error(err);
+
+  // eslint-disable-next-line no-magic-numbers
+  process.exit(1);
+});
+
 const app = express();
 
 connectMongoDb();
 
-// body parser with size limit
 app.use(express.json({ limit: config.limits.maxPayloadSize }));
-// sanitize user input
 app.use(mongoSanitize());
-// rateLimiter
 app.use(rateLimiter);
-// HTTP response headers
 app.use(helmet());
-// cookies
 app.use(cookieParser());
-// swagger docs
-const swaggerDocument = YAML.load('./apiDocs/swagger.yaml');
-app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// routes
+const swaggerDocument = YAML.load('./apiDocs/swagger.yaml');
+
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);
 

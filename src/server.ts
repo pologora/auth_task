@@ -1,9 +1,18 @@
+/* eslint-disable no-magic-numbers */
+/* eslint-disable no-console */
 import { app } from './app';
 import { config } from './config/config';
 
 const { port } = config.server;
 
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+});
+
+process.on('unhandledRejection', (err: Error) => {
+  console.error(err);
+
+  server.close(() => {
+    process.exit(1);
+  });
 });
