@@ -14,7 +14,10 @@ const userController = new UserController(userService, userCreateSchema, userUpd
 
 userRouter
   .route('/')
-  .get(asyncErrorCatch((req, res, next) => userController.findMany(req, res, next)))
+  .get(
+    protect,
+    asyncErrorCatch((req, res, next) => userController.findMany(req, res, next)),
+  )
   .post(
     protect,
     restrictTo('admin'),
