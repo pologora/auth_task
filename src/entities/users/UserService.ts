@@ -37,7 +37,7 @@ export class UserService {
     return this.checkUserExists(user);
   }
 
-  async findMany({ queryParams }: FindManyProps): Promise<IUser[]> {
+  async findAll({ queryParams }: FindManyProps): Promise<IUser[]> {
     return await this.User.find(queryParams);
   }
 

@@ -43,14 +43,14 @@ export class UserController extends BaseController {
     });
   }
 
-  async findMany(req: Request, res: Response, _next: NextFunction) {
+  async findAll(req: Request, res: Response, _next: NextFunction) {
     const { error, value } = this.userParamsSchema.validate(req.query);
 
     if (error) {
       throw new AppError(error.message);
     }
 
-    const users = await this.userService.findMany({ queryParams: value });
+    const users = await this.userService.findAll({ queryParams: value });
 
     this.sendResponse({
       message: 'Users retrieved successfully.',

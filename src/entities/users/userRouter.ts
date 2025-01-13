@@ -16,7 +16,7 @@ userRouter
   .route('/')
   .get(
     protect,
-    asyncErrorCatch((req, res, next) => userController.findMany(req, res, next)),
+    asyncErrorCatch((req, res, next) => userController.findAll(req, res, next)),
   )
   .post(
     protect,
