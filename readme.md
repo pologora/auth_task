@@ -10,25 +10,6 @@
 6. [Security](#security)
 7. [API Documentation](#api-documentation)
 
-   - [Authentication](#authentication)
-
-     - [Login](#login)
-     - [Register](#register)
-     - [Get Me](#get-me)
-     - [Forgot Password](#forgot-password)
-     - [Reset Password](#reset-password)
-     - [Change My Password](#change-my-password)
-     - [Delete Me](#delete-me)
-     - [Logout](#logout)
-
-   - [Users](#users)
-
-     - [Create User](#create-user)
-     - [Get Many Users](#get-many-users)
-     - [Get User By ID](#get-user-by-id)
-     - [Update User](#update-user)
-     - [Delete User](#delete-user)
-
 ## Technical requirements
 
 - Programming language - `Typescript`
@@ -98,9 +79,18 @@ The application will be accessible at `http://localhost:3000/api/v1`
 
 The following security measures have been implemented:
 
-- Encrypted passwords and reset password tokens
+- Encrypted passwords
 - Rate limiting
 - JWT stored in cookies
-- Denial of access after password change
+- Limit failed login attempts. After multiple failed login attempts, the account will be temporarily blocked for a limited period
 - Security headers with `Helmet`
 - Sanitizes user-supplied data to prevent MongoDB Operator Injection
+- Limit body payload size
+
+## Api documentation
+
+The API documentation is generated using Swagger and is accessible when the server is running at the following URL:
+
+```bash
+http://localhost:3000/api/v1/api-docs
+```
