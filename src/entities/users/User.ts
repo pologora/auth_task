@@ -3,35 +3,38 @@ import { USER_ROLES } from '../../config/constants';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { PasswordService } from '../../core/PasswordService';
 
-const UserSchema = new Schema<CreateUserDto>({
-  email: {
-    lowercase: true,
-    required: [true, 'Email address is required'],
-    type: String,
-    unique: true,
+const UserSchema = new Schema<CreateUserDto>(
+  {
+    email: {
+      lowercase: true,
+      required: [true, 'Email address is required'],
+      type: String,
+      unique: true,
+    },
+    firstName: { type: String },
+    lastName: { type: String },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    role: {
+      enum: Object.values(USER_ROLES),
+      required: true,
+      type: String,
+    },
+    failedLoginAttempts: {
+      default: 0,
+      select: false,
+      type: Number,
+    },
+    lockUntil: {
+      select: false,
+      type: Date,
+    },
   },
-  firstName: { type: String },
-  lastName: { type: String },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  role: {
-    enum: Object.values(USER_ROLES),
-    required: true,
-    type: String,
-  },
-  failedLoginAttempts: {
-    default: 0,
-    select: false,
-    type: Number,
-  },
-  lockUntil: {
-    select: false,
-    type: Date,
-  },
-});
+  { versionKey: false },
+);
 
 UserSchema.methods.setPassword = async function (password: string) {
   this.password = await PasswordService.hashPassword({ password });
