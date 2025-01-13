@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { IUser } from '../users/types/types';
+import { CreateUserDto, IUser } from '../users/types/types';
 import { UserService } from '../users/UserService';
 import { AppError } from '../../core/AppError';
 import { ERROR_MESSAGES, HTTP_STATUS_CODES } from '../../config/constants';
@@ -7,7 +7,7 @@ import { JWTCreateFunction } from '../../utils/jwtFunction';
 import { config } from '../../config/config';
 
 type RegisterProps = {
-  data: IUser;
+  data: CreateUserDto;
 };
 
 type LoginProps = {
@@ -26,7 +26,7 @@ export class AuthService {
     return { user, token };
   }
 
-  async login({ email, password }: LoginProps): Promise<{ user: Partial<IUser>; token: string }> {
+  async login({ email, password }: LoginProps): Promise<{ user: IUser; token: string }> {
     const user = await this.findUserByEmail(email);
 
     if (!user) {
@@ -50,7 +50,7 @@ export class AuthService {
       password: undefined,
       failedLoginAttempts: undefined,
       lockUntil: undefined,
-    } as Partial<IUser>;
+    };
   }
 
   private async checkAndHandleLockStatus(user: IUser): Promise<void> {

@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { BaseController } from '../../core/BaseController';
 import { AuthService } from './AuthService';
 import { APP_MODES, HTTP_STATUS_CODES } from '../../config/constants';
 import { config } from '../../config/config';
 import { AppError } from '../../core/AppError';
 import { Schema } from 'joi';
+import { BaseResponseHandler } from '../../core/BaseResponseHandler';
+import { IUser } from '../users/types/types';
 
 type SetJWTCookieProps = {
   res: Response;
   token: string;
 };
 
-export class AuthController extends BaseController {
+export class AuthController extends BaseResponseHandler<IUser> {
   constructor(private authService: AuthService, private userRegisterSchema: Schema, private userLoginSchema: Schema) {
     super();
   }
