@@ -30,7 +30,7 @@ export const ERROR_MESSAGES = {
   invalidCredentials: `Invalid credentials. You have ${config.auth.maxLoginAttempts} attempts until your account will be temporarily blocked.`,
   lockedTooManyFailedLoginAttempts: `Your account has been locked due to too many failed login attempts. Try again at {{lockUntil}}`,
   userNotFound: 'User not found',
-  defaultUserFriendly: 'Something went wrong, please try again later.',
+  defaultUserFriendly: 'Something went wrong, please try again later',
 };
 
 export const millisecondsInSecond = 1000;

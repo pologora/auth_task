@@ -10,6 +10,8 @@ import { userRouter } from './entities/users/userRouter';
 import { rateLimiter } from './config/rateLimiter';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 import { config } from './config/config';
 import { authRouter } from './entities/auth/authRouter';
 
@@ -27,6 +29,9 @@ app.use(rateLimiter);
 app.use(helmet());
 // cookies
 app.use(cookieParser());
+// swagger docs
+const swaggerDocument = YAML.load('./apiDocs/swagger.yaml');
+app.use('/api/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // routes
 app.use('/api/v1/users', userRouter);

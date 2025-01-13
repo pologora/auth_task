@@ -1,0 +1,1111 @@
+openapi: 3.0.0
+info:
+  title: Your API Name
+  version: 1.0.0
+  description: API documentation for your application
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local server
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: jwt
+  schemas:
+    UnauthorizedErrorLogin:
+      type: object
+      properties:
+        err:
+          type: object
+          properties:
+            statusCode:
+              type: integer
+              example: 401
+            isOperational:
+              type: boolean
+              example: true
+        message:
+          type: string
+          example: Invalid credentials. You have 5 attempts until your account will be temporarily blocked.
+        stack:
+          type: string
+          nullable: true
+          example: |
+            Error: Invalid credentials. You have 5 attempts until your account will be temporarily blocked.
+                at AuthService.<anonymous> (C:\Users\Lenovo\Documents\projects\auth_task\src\entities\auth\AuthService.ts:131:15)
+                at Generator.next (<anonymous>)
+                at fulfilled (C:\Users\Lenovo\Documents\projects\auth_task\src\entities\auth\AuthService.ts:5:58)
+                at processTicksAndRejections (node:internal/process/task_queues:95:5)
+        status:
+          type: string
+          example: error
+    UnauthorizedError:
+      type: object
+      properties:
+        err:
+          type: object
+          properties:
+            statusCode:
+              type: integer
+              example: 401
+            isOperational:
+              type: boolean
+              example: true
+        message:
+          type: string
+          example: Not authorized
+        stack:
+          type: string
+          nullable: true
+          example: |
+            Error: Not authorized
+                at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+        status:
+          type: string
+          example: error
+
+    BadRequestError:
+      type: object
+      properties:
+        err:
+          type: object
+          properties:
+            statusCode:
+              type: integer
+              example: 400
+            isOperational:
+              type: boolean
+              example: true
+        message:
+          type: string
+          example: 'Invalid record ID.'
+        stack:
+          type: string
+          nullable: true
+          example: |
+            Error: Invalid record ID.
+                at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+        status:
+          type: string
+          example: 'error'
+
+    ForbiddenError:
+      type: object
+      properties:
+        err:
+          type: object
+          properties:
+            statusCode:
+              type: integer
+              example: 403
+            isOperational:
+              type: boolean
+              example: true
+        message:
+          type: string
+          example: User does not have the required permissions
+        stack:
+          type: string
+          nullable: true
+          example: |
+            Error: User does not have the required permissions
+                at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\restrictTo.ts:17:19
+        status:
+          type: string
+          example: error
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: User Login
+      description: Authenticates a user and returns their details along with a JWT in cookies. After multiple failed login attempts, the account will be temporarily blocked for a limited period.
+      requestBody:
+        description: User's email and password for login.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: mail2@mail.com
+                password:
+                  type: string
+                  format: password
+                  example: pass1234
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User login successfully
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6782a883b39f9f94a9211ab5
+                      email:
+                        type: string
+                        format: email
+                        example: mail2@mail.com
+                      role:
+                        type: string
+                        example: admin
+                      __v:
+                        type: integer
+                        example: 0
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorLogin'
+              examples:
+                invalid_credentials:
+                  summary: Invalid Credentials
+                  value:
+                    message: Invalid credentials. You have 5 attempts until your account will be temporarily blocked.
+                    status: error
+                account_locked:
+                  summary: Account Locked
+                  value:
+                    message: Your account has been locked due to too many failed login attempts. Try again at Mon Jan 13 2025 06:38:42 GMT+0100 (czas środkowoeuropejski standardowy)
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      description: Creates a new user account. Password, confirmPassword, email, and role are required fields.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - confirmPassword
+                - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: mail@mail.com
+                firstName:
+                  type: string
+                  example: Jo
+                lastName:
+                  type: string
+                  example: Wo
+                role:
+                  type: string
+                  enum:
+                    - user
+                    - admin
+                  example: user
+                password:
+                  type: string
+                  format: password
+                  example: pass1111
+                confirmPassword:
+                  type: string
+                  format: password
+                  example: pass1111
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User registered successfully.
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6784a595df86d08d6c28dcc3
+                      email:
+                        type: string
+                        format: email
+                        example: mail123@mail.com
+                      firstName:
+                        type: string
+                        example: Jo
+                      lastName:
+                        type: string
+                        example: Wo
+                      role:
+                        type: string
+                        example: user
+                      __v:
+                        type: integer
+                        example: 0
+        '400':
+          description: Bad Request - Validation errors or missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation error message
+                  status:
+                    type: string
+                    example: error
+              examples:
+                passwordTooShort:
+                  summary: Password too short
+                  value:
+                    message: '"password" length must be at least 8 characters long'
+                    status: error
+                invalidField:
+                  summary: Invalid field detected
+                  value:
+                    message: '"cheatCode" is not allowed'
+                    status: error
+                passwordMismatch:
+                  summary: Passwords do not match
+                  value:
+                    message: 'Passwords do not match'
+                    status: error
+                roleMissing:
+                  summary: Role is required
+                  value:
+                    message: '"role" is required'
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+  /auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: Log out the user.
+      description: Logs out the current user by clearing JWT cookie.
+      responses:
+        '204':
+          description: No Content - Successfully logged out
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+
+  /users:
+    post:
+      summary: Create a new user
+      description: This endpoint creates a new user and returns the created user data in the response. Only authenticated users with the "admin" role can perform this operation.
+      tags:
+        - Users
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: mail222@mail.com
+                firstName:
+                  type: string
+                  example: Alice
+                  nullable: true
+                lastName:
+                  type: string
+                  example: Bin
+                  nullable: true
+                password:
+                  type: string
+                  format: password
+                  example: mySecurePassword123
+                role:
+                  type: string
+                  example: 'user'
+              required:
+                - email
+                - password
+                - role
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User created successfully.
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 67839d439695f6d74284ed74
+                      email:
+                        type: string
+                        example: mail222@mail.com
+                      firstName:
+                        type: string
+                        example: Alice
+                        nullable: true
+                      lastName:
+                        type: string
+                        example: Bin
+                        nullable: true
+                      role:
+                        type: string
+                        example: admin
+                      __v:
+                        type: integer
+                        example: 0
+        '400':
+          description: Bad Request - Validation errors or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 400
+                      isOperational: true
+                    message: 'Invalid record ID.'
+                    stack: |
+                      Error: Invalid record ID.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Invalid record ID.'
+                    status: error
+
+        '401':
+          description: Unauthorized - Access token is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 401
+                      isOperational: true
+                    message: Not authorized
+                    stack: |
+                      Error: Not authorized
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: Not authorized
+                    status: error
+
+        '403':
+          description: Forbidden - User does not have the required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 403
+                      isOperational: true
+                    message: 'User does not have the required permissions'
+                    stack: |
+                      Error: User does not have the required permissions
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\restrictTo.ts:17:19
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'User does not have the required permissions'
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+    get:
+      summary: Get multiple users
+      description: Retrieve a list of users. Optionally, filter by role (`user` or `admin`). Only authenticated users can perform this operation.
+      tags:
+        - Users
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: role
+          in: query
+          description: Filter users by role (either `user` or `admin`).
+          required: false
+          schema:
+            type: string
+            enum:
+              - user
+              - admin
+            example: user
+      responses:
+        '200':
+          description: Successful retrieval of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Users retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: 6782730990990977d0b27895
+                        email:
+                          type: string
+                          example: mail@mail.com
+                        role:
+                          type: string
+                          example: user
+                        firstName:
+                          type: string
+                          nullable: true
+                          example: Alice
+                        lastName:
+                          type: string
+                          nullable: true
+                          example: Bin
+                        __v:
+                          type: integer
+                          example: 0
+              examples:
+                success:
+                  summary: Successful Response
+                  value:
+                    status: success
+                    message: Users retrieved successfully.
+                    data:
+                      - _id: 6782730990990977d0b27895
+                        email: mail@mail.com
+                        role: user
+                        __v: 0
+                      - _id: 6782a883b39f9f94a9211ab5
+                        email: mail2@mail.com
+                        role: admin
+                        __v: 0
+                      - _id: 67839c719695f6d74284ed70
+                        email: mail22@mail.com
+                        role: admin
+                        __v: 0
+                      - _id: 67839d439695f6d74284ed74
+                        email: mail222@mail.com
+                        firstName: Alice
+                        lastName: Bin
+                        role: admin
+                        __v: 0
+        '400':
+          description: Bad Request - Validation errors or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 400
+                      isOperational: true
+                    message: 'Invalid record ID.'
+                    stack: |
+                      Error: Invalid record ID.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Invalid record ID.'
+                    status: error
+        '401':
+          description: Unauthorized - Access token is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 401
+                      isOperational: true
+                    message: Not authorized
+                    stack: |
+                      Error: Not authorized
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: Not authorized
+                    status: error
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      description: This endpoint retrieves user data by user ID. Only authenticated users with the "admin" role can perform this operation..
+      tags:
+        - Users
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the user to retrieve
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 67839d439695f6d74284ed74
+                      email:
+                        type: string
+                        example: mail222@mail.com
+                      firstName:
+                        type: string
+                        example: Alice
+                      lastName:
+                        type: string
+                        example: Bin
+                      role:
+                        type: string
+                        example: admin
+                      __v:
+                        type: integer
+                        example: 0
+        '400':
+          description: Bad Request - Validation errors or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 400
+                      isOperational: true
+                    message: 'Invalid record ID.'
+                    stack: |
+                      Error: Invalid record ID.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Invalid record ID.'
+                    status: error
+        '401':
+          description: Unauthorized - Access token is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 401
+                      isOperational: true
+                    message: Not authorized
+                    stack: |
+                      Error: Not authorized
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: Not authorized
+                    status: error
+        '403':
+          description: Forbidden - User does not have the required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 403
+                      isOperational: true
+                    message: 'User does not have the required permissions'
+                    stack: |
+                      Error: User does not have the required permissions
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\restrictTo.ts:17:19
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'User does not have the required permissions'
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+    patch:
+      summary: Update user information
+      description: Update a user's information by their ID. Only authenticated users with the "admin" role can perform this operation.
+      tags:
+        - Users
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to update
+          required: true
+          schema:
+            type: string
+            example: 6782730990990977d0b27895
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  example: user
+                firstName:
+                  type: string
+                  example: Zi
+                lastName:
+                  type: string
+                  example: Wo
+              required:
+                - role
+      responses:
+        '200':
+          description: Successful update of the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6782730990990977d0b27895
+                      email:
+                        type: string
+                        example: mail@mail.com
+                      role:
+                        type: string
+                        example: user
+                      firstName:
+                        type: string
+                        example: Zi
+                      lastName:
+                        type: string
+                        example: Wo
+                      __v:
+                        type: integer
+                        example: 0
+              examples:
+                success:
+                  summary: Successful Response
+                  value:
+                    status: success
+                    message: User updated successfully.
+                    data:
+                      _id: 6782730990990977d0b27895
+                      email: mail@mail.com
+                      role: user
+                      firstName: Zi
+                      lastName: Wo
+                      __v: 0
+        '400':
+          description: Bad Request - Validation errors or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 400
+                      isOperational: true
+                    message: 'Invalid record ID.'
+                    stack: |
+                      Error: Invalid record ID.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Invalid record ID.'
+                    status: error
+        '401':
+          description: Unauthorized - Access token is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 401
+                      isOperational: true
+                    message: Not authorized
+                    stack: |
+                      Error: Not authorized
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: Not authorized
+                    status: error
+        '403':
+          description: Forbidden - User does not have the required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 403
+                      isOperational: true
+                    message: 'User does not have the required permissions'
+                    stack: |
+                      Error: User does not have the required permissions
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\restrictTo.ts:17:19
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'User does not have the required permissions'
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
+    delete:
+      summary: Delete user by ID
+      description: Deletes a user by their ID. Only authenticated users with the "admin" role can perform this operation.
+      tags:
+        - Users
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to delete
+          required: true
+          schema:
+            type: string
+            example: 6782730990990977d0b27895
+      responses:
+        '204':
+          description: No Content - User deleted successfully
+        '400':
+          description: Bad Request - Validation errors or missing data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 400
+                      isOperational: true
+                    message: 'Invalid record ID.'
+                    stack: |
+                      Error: Invalid record ID.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Invalid record ID.'
+                    status: error
+        '401':
+          description: Unauthorized - Access token is missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 401
+                      isOperational: true
+                    message: Not authorized
+                    stack: |
+                      Error: Not authorized
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\protect.ts:13:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: Not authorized
+                    status: error
+        '403':
+          description: Forbidden - User does not have the required permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 403
+                      isOperational: true
+                    message: 'User does not have the required permissions'
+                    stack: |
+                      Error: User does not have the required permissions
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\restrictTo.ts:17:19
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'User does not have the required permissions'
+                    status: error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                dev:
+                  summary: Development Response
+                  value:
+                    err:
+                      statusCode: 500
+                      isOperational: false
+                    message: 'Error message'
+                    stack: |
+                      Error: Error message.
+                          at C:\Users\Lenovo\Documents\projects\auth_task\src\middleware\isValidId.ts:9:17
+                    status: error
+                prod:
+                  summary: Production Response
+                  value:
+                    message: 'Something went wrong, please try again later'
+                    status: error
