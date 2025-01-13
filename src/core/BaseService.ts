@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { ERROR_MESSAGES, HTTP_STATUS_CODES } from '../config/constants';
 import { AppError } from './AppError';
 
-export type createProps = { data: object };
+export type CreateProps = { data: object };
 export type FindOneByIdProps = { id: string };
 export type FindManyProps = { queryParams: object };
 export type UpdateUserProps = { data: object; id: string };
@@ -19,7 +19,7 @@ export class BaseService<T> {
     return record;
   }
 
-  async create({ data }: createProps): Promise<T> {
+  async create({ data }: CreateProps): Promise<T> {
     const record = new this.model(data);
 
     await record.save();
