@@ -6,7 +6,7 @@
 2. [Installation](#installation)
 3. [Running the Application](#running-the-application)
 4. [Running tests](#running-tests)
-5. [Database Schema](#database-schema-design)
+5. [Database Schema](#database-schema)
 6. [Security](#security)
 7. [API Documentation](#api-documentation)
 
@@ -38,7 +38,7 @@ npm install
 
 2. **Configuration:**
 
-- Rename `env.dev.example` to `.env.dev` and adjust the variables as needed.
+- Rename `env.dev.example` to `.env.dev`.
 - Rename `env.prod.example` to `.env.prod.` Ensure all necessary variables are set for the application to function properly in the production environment.
 
 ### Development Enviroment
@@ -79,13 +79,14 @@ The application will be accessible at `http://localhost:3000/api/v1`
 
 The following security measures have been implemented:
 
-- Encrypted passwords
-- Rate limiting
-- JWT stored in cookies
-- Limit failed login attempts. After multiple failed login attempts, the account will be temporarily blocked for a limited period
-- Security headers with `Helmet`
-- Sanitizes user-supplied data to prevent MongoDB Operator Injection
-- Limit body payload size
+- Passwords are encrypted
+- Rate limiting is enforced
+- JWT is stored in cookies
+- Failed login attempts are limited. After multiple unsuccessful attempts, the account will be temporarily blocked for a limited period
+- Security headers are configured with `Helmet`
+- User-supplied data is sanitized to prevent MongoDB Operator Injection
+- Body payload size is limited
+- All incoming data is validated before processing
 
 ## Api documentation
 
