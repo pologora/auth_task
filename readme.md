@@ -5,10 +5,9 @@
 1. [Technical Requirements](#technical-requirements)
 2. [Installation](#installation)
 3. [Running the Application](#running-the-application)
-4. [Running tests](#running-tests)
-5. [Database Schema](#database-schema)
-6. [Security](#security)
-7. [API Documentation](#api-documentation)
+4. [Database Schema](#database-schema)
+5. [Security](#security)
+6. [API Documentation](#api-documentation)
 
 ## Technical requirements
 
